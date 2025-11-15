@@ -3,5 +3,4 @@ finetune
 yolov8s.pt
 runs
 debug.py
-best.pt
 test11.png
