@@ -28,6 +28,7 @@ Your task:
 1. Infer the correct book titles and authors.
 2. For each book, return a JSON object with:
    - "title"
+   - "ISBN"
    - "author"
    - "description" 
 

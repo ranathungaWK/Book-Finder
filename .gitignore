@@ -4,3 +4,4 @@ yolov8s.pt
 runs
 debug.py
 test11.png
+.env 
