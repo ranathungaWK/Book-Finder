@@ -84,7 +84,7 @@ An intelligent computer vision application that identifies books from shelf imag
 
 6. **Download the trained model**
    - Place your trained `best.pt` model in the `models/` directory
-   - Or train your own model using the data in `finetune/`
+   - Or train your own model using the data in `https://universe.roboflow.com/harald-varner-xv5u7/book-spine-instance-segmentation`
 
 ## 🎮 Usage
 
@@ -225,10 +225,6 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/AllEyesOnMe`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## 🐛 Known Issues
 
 - OCR accuracy depends on image quality and lighting
@@ -240,7 +236,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [ ] Add support for multiple languages
 - [ ] Integrate with book databases (Google Books API, OpenLibrary)
 - [ ] Mobile application
-- [ ] Real-time video detection
 - [ ] Book recommendation system based on detected books
 - [ ] Export reading list functionality
 - [ ] Barcode/ISBN scanning
