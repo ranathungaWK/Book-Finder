@@ -5,14 +5,13 @@ An intelligent computer vision application that identifies books from shelf imag
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-3.1.2-green.svg)
 ![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-orange.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 
 ## ✨ Features
 
 - **🔍 Automated Book Detection**: Uses YOLOv8 deep learning model to detect book spines in images
 - **📖 OCR Text Extraction**: Extracts text from book spines using EasyOCR
 - **🎯 High Accuracy**: Fine-tuned YOLO model specifically trained for book spine detection
-- **👤 User Authentication**: Secure user registration and login system
 - **📊 Reading History**: Track books you've read with timestamps
 - **🖼️ Image Processing**: Intelligent image preprocessing for optimal detection
 - **🌐 REST API**: RESTful endpoints for easy integration
