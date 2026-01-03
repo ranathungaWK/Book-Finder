@@ -4,7 +4,7 @@ from utils.validators import is_valid_email, is_strong_password , is_valid_usern
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['POST'])
+@auth_bp.route('/signup', methods=['POST'])
 def register():
     data = request.get_json(silent=True) or {}
 
