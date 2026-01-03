@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #9ca3af;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-indicator:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="w-full px-6 py-4 flex items-center justify-between border-b border-gray-200">
+            <!-- Left: Book Finder Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold text-gray-900">Book Finder</span>
+            </div>
+            
+            <!-- Right: Login, Sign up, Help -->
+            <div class="flex items-center gap-3">
+                <button id="loginBtn" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition">
+                    Log in
+                </button>
+                <button id="signupBtn" class="bg-white text-black border border-gray-300 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-50 transition">
+                    Sign up
+                </button>
+                <button id="helpBtn" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition">
+                    <span class="text-gray-600 text-sm">?</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex">
+            <!-- Left Side: Chat Area -->
+            <div class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+                <!-- Main Question -->
+                <h1 class="text-4xl font-semibold text-gray-800 mb-12 text-center">
+                    Identify Books from Images
+                </h1>
+
+            <!-- Input Field -->
+            <div class="w-full max-w-3xl mb-8">
+                <div class="bg-white border border-gray-300 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
+                    <!-- Left Side Icons -->
+                    <div class="flex items-center gap-2">
+                        <button id="attachBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition text-sm text-gray-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <span>Attach</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Input Placeholder -->
+                    <input 
+                        type="text" 
+                        id="messageInput"
+                        placeholder="Upload an image to identify books..." 
+                        class="flex-1 px-4 py-2 text-gray-500 text-sm focus:outline-none"
+                    />
+                    <input type="file" id="fileInput" class="hidden" multiple accept="image/*,application/pdf,.doc,.docx,.txt,.mp3,.wav,.ogg">
+                    
+                    <!-- Send Button -->
+                    <button id="sendBtn" class="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition text-sm font-medium hidden">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        <span>Send</span>
+                    </button>
+                </div>
+            </div>
+
+
+                <!-- Chat Messages Area (Hidden initially) -->
+                <div id="chatArea" class="w-full max-w-3xl mt-8 hidden">
+                    <div id="messagesContainer" class="space-y-4 max-h-96 overflow-y-auto mb-4"></div>
+                </div>
+            </div>
+
+            <!-- Right Side: Image Viewing Panel -->
+            <div class="w-96 border-l border-gray-200 bg-gray-50 flex flex-col">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Uploaded Images
+                    </h2>
+                </div>
+                <div id="imagePanel" class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center text-gray-500 py-12">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm">No images uploaded yet</p>
+                        <p class="text-xs text-gray-400 mt-1">Upload images to see them here</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full px-6 py-6 flex items-center justify-between border-t border-gray-200">
+            <p class="text-sm text-gray-500 text-center flex-1">
+                Book Finder uses AI-powered OCR technology to identify books from spine images. Upload clear images for best results.
+            </p>
+            <button id="footerHelpBtn" class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition ml-4">
+                <span class="text-gray-600 text-sm">?</span>
+            </button>
+        </footer>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Help & Support</h2>
+                <button id="closeHelpModal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-semibold mb-2">Keyboard Shortcuts</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                    <li>• Press <kbd class="px-2 py-1 bg-gray-100 rounded">Enter</kbd> to send message</li>
+                    <li>• Press <kbd class="px-2 py-1 bg-gray-100 rounded">Shift + Enter</kbd> for new line</li>
+                    <li>• Upload images to identify books from spines</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Features</h3>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>• Attach image files to identify books</li>
+                        <li>• View uploaded images in the side panel</li>
+                        <li>• Get book information from spine images</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            attachedFiles: [],
+            chatHistory: []
+        };
+
+
+        // DOM Elements
+        const messageInput = document.getElementById('messageInput');
+        const attachBtn = document.getElementById('attachBtn');
+        const fileInput = document.getElementById('fileInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const helpBtn = document.getElementById('helpBtn');
+        const footerHelpBtn = document.getElementById('footerHelpBtn');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpModal = document.getElementById('closeHelpModal');
+
+        // Update send button visibility
+        function updateSendButton() {
+            const hasText = messageInput.value.trim().length > 0;
+            if (hasText) {
+                sendBtn.classList.remove('hidden');
+            } else {
+                sendBtn.classList.add('hidden');
+            }
+        }
+
+        // Input event listeners
+        messageInput.addEventListener('input', updateSendButton);
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Attach file functionality
+        attachBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            state.attachedFiles = [...state.attachedFiles, ...files];
+            showNotification(`${files.length} file(s) attached`, 'success');
+            updateAttachButton();
+            
+            // Add images to image panel
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    addImageToPanel(file);
+                }
+            });
+            
+            // Optionally send files to book identification endpoint
+            if (files.length > 0) {
+                sendFilesToBookIdentifier(files);
+            }
+        });
+
+        // Function to send attached files to book identification endpoint
+        async function sendFilesToBookIdentifier(files) {
+            try {
+                const formData = new FormData();
+                
+                // Add the first image file as the main image (if it's an image)
+                const imageFile = files.find(file => file.type.startsWith('image/'));
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                } else {
+                    // If no image, use the first file as image (or create a placeholder)
+                    showNotification('Please attach an image file for book identification', 'info');
+                    return;
+                }
+                
+                // Add other files as attached files
+                files.forEach((file, index) => {
+                    if (file !== imageFile) {
+                        formData.append('attached_files', file);
+                    }
+                });
+                
+                showNotification('Sending files to book identification service...', 'info');
+                
+                // Show loading message in chat
+                const loadingId = showTypingIndicator();
+                
+                const response = await fetch('http://127.0.0.1:5000/books/identifying_books', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                // Remove loading indicator
+                hideTypingIndicator(loadingId);
+                
+                // Check if response is ok before parsing JSON
+                let data;
+                try {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        data = await response.json();
+                    } else {
+                        const text = await response.text();
+                        console.error('Non-JSON response:', text);
+                        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
+                    }
+                } catch (parseError) {
+                    console.error('Error parsing response:', parseError);
+                    showNotification('Error parsing server response', 'error');
+                    addMessageToChat(`❌ Error: Server response error. Status: ${response.status} ${response.statusText}`, 'assistant');
+                    return;
+                }
+                
+                if (response.ok) {
+                    showNotification(`Files processed successfully! ${data.attached_files_count || 0} file(s) attached.`, 'success');
+                    
+                    // Display comprehensive book identification results
+                    displayBookIdentificationResults(data);
+                } else {
+                    const errorMsg = data.error || data.message || `Server error: ${response.status} ${response.statusText}`;
+                    showNotification(errorMsg, 'error');
+                    addMessageToChat(`❌ Error: ${errorMsg}`, 'assistant');
+                }
+            } catch (error) {
+                console.error('Error sending files:', error);
+                hideTypingIndicator(loadingId);
+                
+                let errorMessage = 'Failed to process files. Please try again.';
+                if (error.message) {
+                    errorMessage = error.message;
+                } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage = 'Cannot connect to server. Make sure the Flask server is running on http://127.0.0.1:5000';
+                }
+                
+                showNotification(errorMessage, 'error');
+                addMessageToChat(`❌ Error: ${errorMessage}`, 'assistant');
+            }
+        }
+
+        function updateAttachButton() {
+            if (state.attachedFiles.length > 0) {
+                attachBtn.classList.add('bg-blue-100', 'text-blue-700');
+                attachBtn.querySelector('span').textContent = `Attach (${state.attachedFiles.length})`;
+            } else {
+                attachBtn.classList.remove('bg-blue-100', 'text-blue-700');
+                attachBtn.querySelector('span').textContent = 'Attach';
+            }
+        }
+
+        // Display book identification results in a formatted way
+        function displayBookIdentificationResults(data) {
+            const chatArea = document.getElementById('chatArea');
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            chatArea.classList.remove('hidden');
+            
+            // Create result container
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'flex justify-start mb-4';
+            
+            const resultBubble = document.createElement('div');
+            resultBubble.className = 'max-w-[85%] bg-gray-100 rounded-lg p-4 text-gray-800';
+            
+            let htmlContent = '<div class="space-y-4">';
+            
+            // Header
+            htmlContent += '<div class="border-b border-gray-300 pb-2 mb-3">';
+            htmlContent += '<h3 class="text-lg font-semibold text-gray-900">📚 Book Identification Results</h3>';
+            htmlContent += '</div>';
+            
+            // Message if no detections
+            if (data.message) {
+                htmlContent += `<div class="bg-yellow-50 border border-yellow-200 rounded p-3 mb-3">`;
+                htmlContent += `<p class="text-sm text-yellow-800">${data.message}</p>`;
+                htmlContent += `</div>`;
+            }
+            
+            // Detections (OCR Results)
+            if (data.detections && data.detections.length > 0) {
+                htmlContent += '<div class="mb-4">';
+                htmlContent += '<h4 class="font-semibold text-sm text-gray-700 mb-2">🔍 Detected Text (OCR):</h4>';
+                htmlContent += '<div class="space-y-2">';
+                
+                data.detections.forEach((detection, index) => {
+                    htmlContent += `<div class="bg-white rounded p-2 border border-gray-200">`;
+                    htmlContent += `<p class="text-xs text-gray-600 mb-1">Spine ${index + 1}:</p>`;
+                    if (Array.isArray(detection)) {
+                        detection.forEach((item, itemIndex) => {
+                            const text = Array.isArray(item) ? item[0] : (item.text || item);
+                            const confidence = Array.isArray(item) ? item[1] : (item.confidence || 'N/A');
+                            htmlContent += `<div class="text-sm">`;
+                            htmlContent += `<span class="font-medium">"${text}"</span>`;
+                            htmlContent += `<span class="text-xs text-gray-500 ml-2">(${(confidence * 100).toFixed(1)}% confidence)</span>`;
+                            htmlContent += `</div>`;
+                        });
+                    } else {
+                        htmlContent += `<p class="text-sm">${JSON.stringify(detection)}</p>`;
+                    }
+                    htmlContent += `</div>`;
+                });
+                
+                htmlContent += '</div>';
+                htmlContent += '</div>';
+            }
+            
+            // Book Information
+            if (data.book_info) {
+                htmlContent += '<div class="mb-4">';
+                htmlContent += '<h4 class="font-semibold text-sm text-gray-700 mb-2">📖 Identified Books:</h4>';
+                htmlContent += '<div class="space-y-3">';
+                
+                let books = [];
+                if (Array.isArray(data.book_info)) {
+                    books = data.book_info;
+                } else if (typeof data.book_info === 'object' && data.book_info !== null) {
+                    // Handle error objects
+                    if (data.book_info.error) {
+                        htmlContent += `<div class="bg-yellow-50 border border-yellow-300 rounded p-3 mb-3">`;
+                        htmlContent += `<p class="text-sm text-yellow-800"><strong>⚠️ Warning:</strong> ${data.book_info.error}</p>`;
+                        if (data.book_info.message) {
+                            htmlContent += `<p class="text-xs text-yellow-700 mt-1">${data.book_info.message}</p>`;
+                        }
+                        if (data.book_info.suggestion) {
+                            htmlContent += `<p class="text-xs text-yellow-600 mt-1 italic">💡 ${data.book_info.suggestion}</p>`;
+                        }
+                        if (data.book_info.raw_text) {
+                            htmlContent += `<details class="mt-2">`;
+                            htmlContent += `<summary class="text-xs text-yellow-700 cursor-pointer">Show raw model output</summary>`;
+                            htmlContent += `<pre class="text-xs bg-white p-2 mt-1 rounded border border-yellow-200 overflow-auto max-h-40">${escapeHtml(data.book_info.raw_text)}</pre>`;
+                            htmlContent += `</details>`;
+                        }
+                        htmlContent += `</div>`;
+                        
+                        // If it's a parsing error but we have detections, still show them
+                        if (data.detections && data.detections.length > 0) {
+                            htmlContent += `<div class="bg-blue-50 border border-blue-200 rounded p-2 mb-3">`;
+                            htmlContent += `<p class="text-xs text-blue-800">Note: OCR text was detected but book identification failed. Showing raw OCR results above.</p>`;
+                            htmlContent += `</div>`;
+                        }
+                    } else {
+                        books = [data.book_info];
+                    }
+                }
+                
+                if (books.length > 0) {
+                    books.forEach((book, index) => {
+                        const title = book.title || book.get?.('title') || 'Unknown Title';
+                        const author = book.author || book.get?.('author') || 'Unknown Author';
+                        const isbn = book.ISBN || book.isbn || book.get?.('ISBN') || book.get?.('isbn') || 'N/A';
+                        const description = book.description || book.get?.('description') || '';
+                        
+                        htmlContent += `<div class="bg-white rounded-lg p-3 border border-gray-300 shadow-sm">`;
+                        htmlContent += `<div class="flex items-start justify-between mb-2">`;
+                        htmlContent += `<div class="flex-1">`;
+                        htmlContent += `<p class="font-semibold text-base text-gray-900">${title}</p>`;
+                        htmlContent += `<p class="text-sm text-gray-600 mt-1">by ${author}</p>`;
+                        htmlContent += `</div>`;
+                        htmlContent += `<span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">#${index + 1}</span>`;
+                        htmlContent += `</div>`;
+                        
+                        if (isbn && isbn !== 'N/A') {
+                            htmlContent += `<div class="mt-2 pt-2 border-t border-gray-200">`;
+                            htmlContent += `<p class="text-xs text-gray-500"><strong>ISBN:</strong> ${isbn}</p>`;
+                            htmlContent += `</div>`;
+                        }
+                        
+                        if (description) {
+                            htmlContent += `<div class="mt-2 pt-2 border-t border-gray-200">`;
+                            htmlContent += `<p class="text-xs text-gray-600">${description}</p>`;
+                            htmlContent += `</div>`;
+                        }
+                        
+                        htmlContent += `</div>`;
+                    });
+                }
+                
+                htmlContent += '</div>';
+                htmlContent += '</div>';
+            }
+            
+            // Attached Files Information
+            if (data.attached_files && data.attached_files.length > 0) {
+                htmlContent += '<div class="mb-4">';
+                htmlContent += '<h4 class="font-semibold text-sm text-gray-700 mb-2">📎 Attached Files:</h4>';
+                htmlContent += '<div class="space-y-1">';
+                
+                data.attached_files.forEach((file, index) => {
+                    const fileSizeKB = (file.file_size / 1024).toFixed(2);
+                    htmlContent += `<div class="flex items-center justify-between text-sm bg-white rounded p-2 border border-gray-200">`;
+                    htmlContent += `<div class="flex items-center gap-2">`;
+                    htmlContent += `<span class="text-gray-500">📄</span>`;
+                    htmlContent += `<span class="text-gray-700">${file.original_filename}</span>`;
+                    htmlContent += `</div>`;
+                    htmlContent += `<div class="flex items-center gap-2 text-xs text-gray-500">`;
+                    htmlContent += `<span>${file.file_type.toUpperCase()}</span>`;
+                    htmlContent += `<span>•</span>`;
+                    htmlContent += `<span>${fileSizeKB} KB</span>`;
+                    htmlContent += `</div>`;
+                    htmlContent += `</div>`;
+                });
+                
+                htmlContent += '</div>';
+                htmlContent += '</div>';
+            }
+            
+            // Summary
+            htmlContent += '<div class="bg-blue-50 border border-blue-200 rounded p-2 mt-3">';
+            htmlContent += '<p class="text-xs text-blue-800">';
+            htmlContent += `<strong>Summary:</strong> `;
+            htmlContent += `${data.detections?.length || 0} spine(s) detected, `;
+            htmlContent += `${Array.isArray(data.book_info) ? data.book_info.length : (data.book_info && !data.book_info.error ? 1 : 0)} book(s) identified, `;
+            htmlContent += `${data.attached_files_count || 0} file(s) attached`;
+            htmlContent += '</p>';
+            htmlContent += '</div>';
+            
+            htmlContent += '</div>';
+            
+            resultBubble.innerHTML = htmlContent;
+            resultDiv.appendChild(resultBubble);
+            messagesContainer.appendChild(resultDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Image panel functionality
+        function addImageToPanel(file) {
+            const imagePanel = document.getElementById('imagePanel');
+            
+            // Remove empty state if exists
+            const emptyState = imagePanel.querySelector('.text-center');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm';
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageDiv.innerHTML = `
+                    <div class="relative">
+                        <img src="${e.target.result}" alt="${file.name}" class="w-full h-48 object-cover">
+                        <button class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition" onclick="this.closest('.bg-white').remove(); checkImagePanelEmpty();">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-sm font-medium text-gray-900 truncate">${file.name}</p>
+                        <p class="text-xs text-gray-500 mt-1">${(file.size / 1024).toFixed(2)} KB</p>
+                    </div>
+                `;
+                imagePanel.appendChild(imageDiv);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function checkImagePanelEmpty() {
+            const imagePanel = document.getElementById('imagePanel');
+            if (imagePanel.children.length === 0) {
+                imagePanel.innerHTML = `
+                    <div class="text-center text-gray-500 py-12">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm">No images uploaded yet</p>
+                        <p class="text-xs text-gray-400 mt-1">Upload images to see them here</p>
+                    </div>
+                `;
+            }
+        }
+
+
+        // Send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message && state.attachedFiles.length === 0) {
+                showNotification('Please enter a message or attach a file', 'error');
+                return;
+            }
+
+            // Add user message to chat
+            if (message) {
+                addMessageToChat(message, 'user');
+            }
+            
+            // If files are attached, check if we should send to book identifier
+            if (state.attachedFiles.length > 0) {
+                const hasImage = state.attachedFiles.some(file => file.type.startsWith('image/'));
+                const isBookRelated = message.toLowerCase().includes('book') || 
+                                     message.toLowerCase().includes('identify') ||
+                                     message.toLowerCase().includes('spine') ||
+                                     message.toLowerCase().includes('detect') ||
+                                     message === '';
+                
+                if (hasImage && isBookRelated) {
+                    // Show user message about identifying books
+                    if (message) {
+                        addMessageToChat(`Identifying books in the uploaded image...`, 'assistant');
+                    }
+                    await sendFilesToBookIdentifier(state.attachedFiles);
+                } else if (hasImage) {
+                    // Still send to book identifier if image is present, but show it as processing
+                    addMessageToChat(`Processing image...`, 'assistant');
+                    await sendFilesToBookIdentifier(state.attachedFiles);
+                }
+            }
+            
+            // Clear input
+            messageInput.value = '';
+            updateSendButton();
+            
+            // Only show AI response if there's a message and no book identification was triggered
+            if (message && !(state.attachedFiles.length > 0 && state.attachedFiles.some(file => file.type.startsWith('image/')))) {
+                // Show typing indicator
+                const typingId = showTypingIndicator();
+                
+                // Simulate AI response (replace with actual API call)
+                setTimeout(() => {
+                    hideTypingIndicator(typingId);
+                    const response = generateResponse(message);
+                    addMessageToChat(response, 'assistant');
+                }, 1500);
+            }
+
+            // Clear attached files
+            state.attachedFiles = [];
+            updateAttachButton();
+            
+            // Clear image panel
+            const imagePanel = document.getElementById('imagePanel');
+            imagePanel.innerHTML = `
+                <div class="text-center text-gray-500 py-12">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <p class="text-sm">No images uploaded yet</p>
+                    <p class="text-xs text-gray-400 mt-1">Upload images to see them here</p>
+                </div>
+            `;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        // Chat functionality
+        function addMessageToChat(message, sender) {
+            const chatArea = document.getElementById('chatArea');
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            chatArea.classList.remove('hidden');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `max-w-[80%] rounded-lg px-4 py-2 ${
+                sender === 'user' 
+                    ? 'bg-black text-white' 
+                    : 'bg-gray-100 text-gray-800'
+            }`;
+            messageBubble.textContent = message;
+            
+            messageDiv.appendChild(messageBubble);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Hide main question when chat starts
+            if (sender === 'user') {
+                document.querySelector('h1').classList.add('hidden');
+            }
+        }
+
+        function showTypingIndicator() {
+            const chatArea = document.getElementById('chatArea');
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            chatArea.classList.remove('hidden');
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'flex justify-start';
+            typingDiv.id = 'typing-indicator';
+            
+            const typingBubble = document.createElement('div');
+            typingBubble.className = 'bg-gray-100 rounded-lg px-4 py-3 flex gap-1';
+            
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'typing-indicator';
+                typingBubble.appendChild(dot);
+            }
+            
+            typingDiv.appendChild(typingBubble);
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return 'typing-indicator';
+        }
+
+        function hideTypingIndicator(id) {
+            const indicator = document.getElementById(id);
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function generateResponse(userMessage) {
+            // Simple response generation (replace with actual API)
+            const responses = [
+                "I understand you're asking about that. Let me help you with that.",
+                "That's an interesting question! Here's what I think...",
+                "I'd be happy to assist you with that. Let me provide some insights.",
+                "Great question! Based on what you've asked, I can suggest...",
+                "I see what you're looking for. Here's a helpful response..."
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
+                type === 'error' ? 'bg-red-500 text-white' :
+                type === 'success' ? 'bg-green-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Login/Signup buttons
+        loginBtn.addEventListener('click', () => {
+            showNotification('Login functionality - Connect to your backend API', 'info');
+        });
+
+        signupBtn.addEventListener('click', () => {
+            showNotification('Sign up functionality - Connect to your backend API', 'info');
+        });
+
+        // Help modal
+        helpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+            helpModal.classList.add('flex');
+        });
+
+        footerHelpBtn.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+            helpModal.classList.add('flex');
+        });
+
+        closeHelpModal.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+            helpModal.classList.remove('flex');
+        });
+
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                helpModal.classList.add('hidden');
+                helpModal.classList.remove('flex');
+            }
+        });
+
+        // Header dropdown (ChatGPT logo)
+        const chatGptDropdown = document.querySelector('header > div:first-child');
+        chatGptDropdown.addEventListener('click', () => {
+            showNotification('ChatGPT menu - Add dropdown functionality here', 'info');
+        });
+
+        // Initialize
+        updateSendButton();
+        console.log('ChatGPT UI initialized successfully!');
+    </script>
+</body>
+</html>
